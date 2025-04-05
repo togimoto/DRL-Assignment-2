@@ -233,9 +233,9 @@ class Game2048Env(gym.Env):
         # If the simulated board is different from the current board, the move is legal
         return not np.array_equal(self.board, temp_board)
 
-with open("LUTs_53700.json", "r") as file:
+with open("LUTs_53700_numpyless.pkl", "rb") as file:
     approximator = NTupleApproximator(board_size=4, patterns=patterns, c=18)
-    approximator.LUTs = json.load(file)
+    approximator.LUTs = pickle.load(file)
 
 def get_action(state, score):
     env = Game2048Env()
