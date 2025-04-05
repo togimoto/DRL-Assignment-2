@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import copy
 import random
 import math
+import json
 
 from ntupleapproximator import *
 
@@ -231,11 +232,10 @@ class Game2048Env(gym.Env):
 
         # If the simulated board is different from the current board, the move is legal
         return not np.array_equal(self.board, temp_board)
-    
-path_to_weights = "LUTs_53700.pkl"
-with open(path_to_weights, "rb") as file:
+
+with open("LUTs_53700.json", "r") as file:
     approximator = NTupleApproximator(board_size=4, patterns=patterns, c=18)
-    approximator.LUTs, _, c = pickle.load(file)
+    approximator.LUTs = json.load(file)
 
 def get_action(state, score):
     env = Game2048Env()
