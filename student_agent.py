@@ -9,6 +9,7 @@ import copy
 import random
 import math
 
+from ntupleapproximator import *
 
 class Game2048Env(gym.Env):
     def __init__(self):
@@ -230,11 +231,17 @@ class Game2048Env(gym.Env):
 
         # If the simulated board is different from the current board, the move is legal
         return not np.array_equal(self.board, temp_board)
+    
+path_to_weights = "LUTs_53700.pkl"
+with open(path_to_weights, "rb") as file:
+    approximator = NTupleApproximator(board_size=4, patterns=patterns, c=18)
+    approximator.LUTs, _, c = pickle.load(file)
 
 def get_action(state, score):
     env = Game2048Env()
-    return random.choice([0, 1, 2, 3]) # Choose a random action
-    
-    # You can submit this random agent to evaluate the performance of a purely random strategy.
+    env.board = state
+    env.score = score
 
+    action, _, _, _ = approximator.get_best_action(env, score)
 
+    return action
