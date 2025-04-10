@@ -77,6 +77,5 @@ def load_approximator(approximator_path):
             assert len(tuple_group) == NUM_TRANSFORMATIONS
     approximator = NTupleApproximator(SYMMETRIC_TUPLES)
     with open(approximator_path, "rb") as file:
-        approximator.LUTs, _, _ = pickle.load(file)
-        print(f"weights loaded from {approximator_path}")
+        approximator.LUTs = pickle.load(file)
     return approximator

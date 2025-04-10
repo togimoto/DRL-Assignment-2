@@ -236,8 +236,8 @@ class Game2048Env(gym.Env):
         return not np.array_equal(self.board, temp_board)
 
 approximators = []
-approximators.append(load_approximator("4x6_LUTs_230000eps.pkl"))
-approximators.append(load_approximator("4x6_LUTs_stage4096_140000eps.pkl"))
+approximators.append(load_approximator("4x6_LUTs_230000eps_no_random_states.pkl"))
+approximators.append(load_approximator("4x6_LUTs_stage4096_140000eps_no_random_states.pkl"))
 fast_env = Board()
 board_size = 4
 

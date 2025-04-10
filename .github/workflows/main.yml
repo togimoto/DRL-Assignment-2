@@ -34,8 +34,8 @@ jobs:
 
     - name: 4. Download weights
       run: |
-        gdown --fuzzy https://drive.google.com/file/d/14-ZdNoBDwmkX9rtCNe1a0AhrbP-oRtff/view?usp=sharing
-        gdown --fuzzy https://drive.google.com/file/d/1xl-eFAwPPs_yUkAzONxNjmay8HkQSHTY/view?usp=sharing
+        gdown --fuzzy https://drive.google.com/file/d/1AtaXw0FDxhLEmGbefI0Y8jGWOJi_FKVb/view?usp=sharing
+        gdown --fuzzy https://drive.google.com/file/d/1068BtHxKT4H2fUwoEAQ_rFV5kmjnmWqn/view?usp=sharing
 
     - name: 5. Run Evaluation
       run: python eval.py --token a91aae52cff9ef65932db06b150ffd47
