@@ -10,7 +10,9 @@ import random
 import math
 import json
 
-from ntupleapproximator import *
+from ntupleapproximator import load_approximator
+from expectimax import choice_node
+from game import Board
 
 class Game2048Env(gym.Env):
     def __init__(self):
@@ -233,15 +235,24 @@ class Game2048Env(gym.Env):
         # If the simulated board is different from the current board, the move is legal
         return not np.array_equal(self.board, temp_board)
 
-with open("LUTs_53700_numpyless.pkl", "rb") as file:
-    approximator = NTupleApproximator(board_size=4, patterns=patterns, c=18)
-    approximator.LUTs = pickle.load(file)
+approximators = []
+approximators.append(load_approximator("4x6_LUTs_230000eps.pkl"))
+approximators.append(load_approximator("4x6_LUTs_stage4096_140000eps.pkl"))
+fast_env = Board()
+board_size = 4
 
 def get_action(state, score):
-    env = Game2048Env()
-    env.board = state
-    env.score = score
+    for i in range(board_size**2):
+        x, y = divmod(i, board_size)
+        if state[x, y] == 0:
+            fast_env.board[i] = 0
+        else:
+            fast_env.board[i] = int(math.log(int(state[x, y]), 2))
 
-    action, _, _, _ = approximator.get_best_action(env, score)
+    max_tile = np.max(state)
+    if max_tile < 4096:
+        action, _ = choice_node(fast_env, approximators[0], 2)
+    else:
+        action, _ = choice_node(fast_env, approximators[1], 2)
 
     return action
