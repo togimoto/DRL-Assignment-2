@@ -240,6 +240,7 @@ approximators.append(load_approximator("4x6_LUTs_230000eps_no_random_states.pkl"
 approximators.append(load_approximator("4x6_LUTs_stage4096_140000eps_no_random_states.pkl"))
 fast_env = Board()
 board_size = 4
+env = Game2048Env()
 
 def get_action(state, score):
     for i in range(board_size**2):
@@ -248,11 +249,17 @@ def get_action(state, score):
             fast_env.board[i] = 0
         else:
             fast_env.board[i] = int(math.log(int(state[x, y]), 2))
-
+    
     max_tile = np.max(state)
     if max_tile < 4096:
         action, _ = choice_node(fast_env, approximators[0], 2)
     else:
         action, _ = choice_node(fast_env, approximators[1], 2)
+    
+    env.state = state.copy()
+    env.score = score
+    legal_actions = [a for a in range(4) if env.is_move_legal(a)]
+    if legal_actions and action not in legal_actions:
+        action = random.choice(legal_actions)
 
     return action
