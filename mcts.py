@@ -140,6 +140,7 @@ class UCTMCTS:
                         self.root = self.root.children[key]
                     else:
                         self.root = UCTNode(copy.deepcopy(env), DECISION)
+                    break
         else:
             self.root = UCTNode(copy.deepcopy(env), DECISION)
     
