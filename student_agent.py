@@ -27,6 +27,10 @@ mcts = UCTMCTS(root, approximators[0], approximators[1])
 last_action = None
 
 def get_action(state, score):
+    global last_action
+    env.board = state
+    env.score = score
+
     if last_action:
         mcts.move_root(last_action, env)
 
