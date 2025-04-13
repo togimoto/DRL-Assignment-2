@@ -23,7 +23,7 @@ previous_score = 0
 board_size = 4
 
 root = UCTNode(copy.deepcopy(env), DECISION)
-mcts = UCTMCTS(root, approximators[0], approximators[1])
+mcts = UCTMCTS(root, approximators[0], approximators[1], iterations=10000)
 last_action = None
 
 def get_action(state, score):
