@@ -53,7 +53,8 @@ class UCTMCTS:
             new_tile = 2 if random.random() < 0.9 else 4
             return node.children[(x, y, new_tile)]
     
-    def expand(self, node: UCTNode, previous_score):
+    def expand(self, node: UCTNode):
+        score = node.env.score
         if node.node_type == DECISION:
             legal_actions = [a for a in range(4) if node.env.is_move_legal(a)]
             assert legal_actions
@@ -63,16 +64,16 @@ class UCTMCTS:
                 new_node = UCTNode(new_env, CHANCE, visits=1, total_reward=0, parent=node, action=action)
                 log_board = self.flatten_board(new_env.board)
                 if new_node.max_tile < 4096:
-                    new_node.total_reward = (new_node.env.score - previous_score + self.approximator_stage1.value(log_board)) / 50_000
+                    new_node.total_reward = (score + self.approximator_stage1.value(log_board)) / 50_000
                 else:
-                    new_node.total_reward = (new_node.env.score - previous_score + self.approximator_stage2.value(log_board)) / 80_000
+                    new_node.total_reward = (score + self.approximator_stage2.value(log_board)) / 80_000
                 node.children[action] = new_node
         else:
             log_board = self.flatten_board(node.env.board)
             if node.max_tile < 4096:
-                board_reward = self.approximator_stage1.value(log_board) / 50_000
+                board_reward = (score + self.approximator_stage1.value(log_board)) / 50_000
             else:
-                board_reward = self.approximator_stage2.value(log_board) / 80_000
+                board_reward = (score + self.approximator_stage2.value(log_board)) / 80_000
             for x, y in node.empty_tiles:
                 for tile_value in (2, 4):
                     new_env = copy.deepcopy(node.env)
@@ -94,17 +95,15 @@ class UCTMCTS:
         node = self.root
 
         # Selection
-        previous_score = node.env.score
         while node.fully_expanded() and not node.done:
             node = self.select_child(node)
 
         # Expansion
         done = node.done
         if not done:
-            self.expand(node, previous_score)
+            self.expand(node)
 
         # Rollout
-        rollout_reward = node.env.score - previous_score
         if not done:
             if node.node_type == DECISION:
                 max_value = float("-inf")
@@ -113,9 +112,9 @@ class UCTMCTS:
                         max_value = child_node.total_reward
                 reward_to_propagate = max_value
             else:
-                reward_to_propagate = rollout_reward + next(iter(node.children.values())).total_reward
+                reward_to_propagate = next(iter(node.children.values())).total_reward
         else:
-            reward_to_propagate = rollout_reward
+            reward_to_propagate = node.env.score
             
         # Backpropagation
         self.backpropagate(node, reward_to_propagate)
