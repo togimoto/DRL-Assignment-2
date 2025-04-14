@@ -34,6 +34,7 @@ class UCTMCTS:
         self.approximator_stage2 = approximator_stage2
         self.iterations = iterations
         self.c = exploration_constant
+        self.last_action = None
 
     def select_child(self, node: UCTNode) -> UCTNode:
         assert node.fully_expanded()
@@ -122,7 +123,6 @@ class UCTMCTS:
     def get_best_action(self):
         best_visits = -1
         best_action = None
-        # print(self.root.children)
         for action, child in self.root.children.items():
             if child.visits > best_visits:
                 best_visits = child.visits

@@ -23,16 +23,19 @@ previous_score = 0
 board_size = 4
 
 root = UCTNode(copy.deepcopy(env), DECISION)
-mcts = UCTMCTS(root, approximators[0], approximators[1], iterations=1_500)
-last_action = None
+mcts = UCTMCTS(root, approximators[0], approximators[1], iterations=500)
+moves = 0
 
 def get_action(state, score):
-    global last_action
-    env.board = state
+    global moves
+
+    print(f"\r{moves} {score} {mcts.last_action}", end="", flush=True)
+
+    env.board = state.copy()
     env.score = score
 
-    if last_action:
-        mcts.move_root(last_action, env)
+    if mcts.last_action is not None:
+        mcts.move_root(mcts.last_action, env)
 
     for _ in range(mcts.iterations):
         mcts.run_simulation()
@@ -43,6 +46,8 @@ def get_action(state, score):
     if legal_actions and action not in legal_actions:
         action = random.choice(legal_actions)
     
-    last_action = action
+    mcts.last_action = action
+
+    moves += 1
 
     return action
