@@ -29,6 +29,7 @@ class UCTNode:
 
 class UCTMCTS:
     def __init__(self, root: UCTNode, approximator_stage1, approximator_stage2, iterations=500, exploration_constant=0.008):
+        # hyperparameters taken from Guei 2023
         self.root = root
         self.approximator_stage1 = approximator_stage1
         self.approximator_stage2 = approximator_stage2

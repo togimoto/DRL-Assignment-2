@@ -29,7 +29,7 @@ moves = 0
 def get_action(state, score):
     global moves
 
-    print(f"\r{moves} {score} {mcts.last_action}", end="", flush=True)
+    # print(f"\r{moves} {score} {mcts.last_action}", end="", flush=True)
 
     env.board = state.copy()
     env.score = score
